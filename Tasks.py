@@ -488,7 +488,7 @@ Insights_data = Task (
 
   8. Final summary of system behavior. """,
   agent = Log_Insights, 
-  context = [ Bias_detection,Explains_issues,Correction_advise, Updates_data,Insights_data] ,
+  context = [ Bias_detection,Explains_issues,Correction_advise, Updates_data,Log_generation ] ,
   output_file =" task_output/generates_logs.md",
 )
 
