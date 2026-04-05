@@ -1,178 +1,265 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EthosAI | Ensuring Fairness in AI Systems</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        primary: '#0d9488', // Teal 600
-                        secondary: '#3b82f6', // Blue 500
-                        lightbg: '#f8fafc', // Slate 50
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Custom smooth transition for details/summary */
-        details>summary {
-            list-style: none;
-        }
-
-        details>summary::-webkit-details-marker {
-            display: none;
-        }
-    </style>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="styles.css">
 </head>
+<body>
 
-<body class="bg-lightbg text-slate-800 font-sans antialiased selection:bg-teal-200 selection:text-teal-900">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <div class="nav-logo" onclick="window.location.href='/'">
+                <div class="nav-logo-icon">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <span class="nav-logo-text">EthosAI</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">Insights</a></li>
+                <li><a href="/docs">Docs</a></li>
+            </ul>
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-scale-balanced text-primary text-2xl"></i>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">EthosAI</span>
-                </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#overview"
-                        class="text-slate-600 hover:text-primary transition-colors font-medium">Overview</a>
-                    <a href="#features"
-                        class="text-slate-600 hover:text-primary transition-colors font-medium">Features</a>
-                    <a href="#dashboard"
-                        class="text-slate-600 hover:text-primary transition-colors font-medium">Dashboard</a>
-                    <a href="#docs" class="text-slate-600 hover:text-primary transition-colors font-medium">Docs</a>
-                </div>
-                <div class="hidden md:flex">
-                    <button onclick="window.location.href='/login'"
-                        class="bg-primary hover:bg-teal-700 text-white px-5 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg">
-                        Login
-                    </button>
-                </div>
-                <div class="md:hidden flex items-center">
-                    <button class="text-slate-600 hover:text-primary focus:outline-none">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
-                </div>
+            <div class="nav-actions">
+                <button class="btn btn-ghost" onclick="window.location.href='/login'">Log In</button>
+                <button class="btn btn-primary" onclick="window.location.href='/login'">Get Early Access</button>
+                <button class="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
         </div>
     </nav>
 
-    <section id="overview" class="relative pt-20 pb-32 flex items-center justify-center overflow-hidden">
-        <div
-            class="absolute top-0 -left-10 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">
+    <!-- Hero Section -->
+    <section class="hero" id="overview">
+        <div class="hero-bg-orbs">
+            <div class="hero-orb hero-orb-1"></div>
+            <div class="hero-orb hero-orb-2"></div>
+            <div class="hero-orb hero-orb-3"></div>
         </div>
-        <div
-            class="absolute top-0 -right-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000">
-        </div>
-
-        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
-            <span
-                class="inline-block py-1 px-3 rounded-full bg-teal-50 text-teal-700 text-sm font-semibold mb-6 border border-teal-100">
-                AI Fairness Platform v1.0
-            </span>
-            <h1 class="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-                Ensuring <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Fairness</span> in
-                AI Systems
-            </h1>
-            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                Detect, measure, and eliminate bias in your datasets and machine learning models to build trustworthy
-                and ethical automated decision-making systems.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button onclick="analyzeBias()"
-                    class="bg-primary hover:bg-teal-700 text-white px-8 py-3 rounded-full font-medium text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                    Analyze Bias <i class="fa-solid fa-arrow-right text-sm"></i>
-                </button>
-                <a href="#features"
-                    class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-3 rounded-full font-medium text-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center">
-                    Learn More
-                </a>
+        <div class="hero-particles" id="particles"></div>
+        
+        <div class="hero-grid container">
+            <div class="hero-content">
+                <span class="section-label">Empowering Human-Centered AI</span>
+                <h1>Empower Your Future with <span class="gradient-text">EthosAI</span>: The Fairness Copilot.</h1>
+                <p>Seamlessly integrate ethics into your AI workflows. Detect bias, measure fairness, and build trust in your machine learning models with our powerful, automated auditing platform.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="window.location.href='/login'">Experience the Demo</button>
+                    <button class="btn btn-ghost btn-lg" onclick="window.location.href='/login'">Integrate Now</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="hero-ai.png" alt="Futuristic AI Robot Character">
             </div>
         </div>
     </section>
 
-    <!-- (Your exactly requested HTML layout remains identical below this point) -->
+    <!-- Trusted By -->
+    <section class="trusted">
+        <div class="container">
+            <p class="trusted-label">Trusted by Innovation Leaders</p>
+            <div class="trusted-logos">
+                <div class="trusted-item">
+                    <i class="fa-solid fa-atom"></i>
+                    <span>Aether Dynamics</span>
+                </div>
+                <div class="trusted-item">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Cipher Solutions</span>
+                </div>
+                <div class="trusted-item">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>OmniCorp Labs</span>
+                </div>
+                <div class="trusted-item">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Synapse Ventures</span>
+                </div>
+                <div class="trusted-item">
+                    <i class="fa-solid fa-vial"></i>
+                    <span>Vector Group</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <section id="features" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4">Core Capabilities</h2>
-                <p class="text-slate-600 max-w-2xl mx-auto">Comprehensive tools designed to inspect every layer of your
-                    AI pipeline for hidden biases.</p>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">Core Capabilities</span>
+                <h2 class="section-title">Seamlessly Analyze AI Bias</h2>
+                <p class="section-subtitle">Comprehensive tools designed to inspect every layer of your machine learning pipeline for hidden discrimination and statistical bias.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div
-                    class="bg-lightbg p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                    <div
-                        class="w-12 h-12 bg-teal-100 text-primary rounded-xl flex items-center justify-center text-xl mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon purple">
                         <i class="fa-solid fa-magnifying-glass-chart"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Bias Detection</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">Automatically scan datasets for protected
-                        attributes and identify statistical parity differences.</p>
+                    <h3>Bias Detection</h3>
+                    <p>Automatically scan datasets for protected attributes and identify statistical parity differences across demographies.</p>
                 </div>
-                <!-- Other cards -->
-                <div
-                    class="bg-lightbg p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                    <div
-                        class="w-12 h-12 bg-blue-100 text-secondary rounded-xl flex items-center justify-center text-xl mb-6 group-hover:bg-secondary group-hover:text-white transition-colors">
+                <div class="feature-card">
+                    <div class="feature-icon blue">
                         <i class="fa-solid fa-ruler-combined"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Fairness Metrics</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">Calculate equal opportunity, demographic parity,
-                        and disparate impact ratios instantly.</p>
+                    <h3>Fairness Metrics</h3>
+                    <p>Calculate equal opportunity, demographic parity, and disparate impact ratios instantly with visual dashboards.</p>
                 </div>
-                <div
-                    class="bg-lightbg p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                    <div
-                        class="w-12 h-12 bg-teal-100 text-primary rounded-xl flex items-center justify-center text-xl mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                <div class="feature-card">
+                    <div class="feature-icon purple">
                         <i class="fa-solid fa-database"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Data Inspection</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">Visualize class imbalances and historical
-                        prejudices within your training data before deployment.</p>
+                    <h3>Data Inspection</h3>
+                    <p>Visualize class imbalances and historical prejudices within training data to preempt ethical risks before deployment.</p>
                 </div>
-                <div
-                    class="bg-lightbg p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                    <div
-                        class="w-12 h-12 bg-blue-100 text-secondary rounded-xl flex items-center justify-center text-xl mb-6 group-hover:bg-secondary group-hover:text-white transition-colors">
+                <div class="feature-card">
+                    <div class="feature-icon blue">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Model Auditing</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">Generate compliance-ready reports detailing model
-                        performance across different demographic slices.</p>
+                    <h3>Model Auditing</h3>
+                    <p>Generate compliance-ready reports detailing performance fairness across demographic slices for regulatory audits.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Additional sections like 'How it works' from your original code omitted for brevity but remain functionally the same visually -->
-    
-    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-white">EthosAI 2026 - Bias Free AI Intelligence</h3>
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">FAQ</span>
+                <h2 class="section-title">Nexus Insights</h2>
+                <p class="section-subtitle">Common questions about EthosAI integration and how our fairness engine works.</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How does EthosAI integrate with my data?
+                        <span class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We support various data connectors including CSV uploads, JSON feeds, and database integrations. Our API can hook directly into your ML training pipelines.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Is EthosAI secure for enterprise use?
+                        <span class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. We use enterprise-grade encryption and can be deployed on-premise to ensure your proprietary training data never leaves your secure infrastructure.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What industries benefit most?
+                        <span class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our platform is most popular in Fintech, Healthcare, and HR tech—sectors where algorithmic fairness is critical for regulatory compliance and social impact.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2>Secure your AI future.</h2>
+            <p>Join hundreds of organizations building trustworthy AI systems with EthosAI. Start your fairness journey today.</p>
+            <button class="btn btn-primary btn-lg" onclick="window.location.href='/login'">Get Started Free</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid container">
+            <div class="footer-brand">
+                <h3>EthosAI</h3>
+                <p>Establishing the gold standard for fairness and transparency in automated intelligence systems worldwide.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">API docs</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Ethics Policy</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>© 2026 EthosAI. All Rights Reserved.</p>
+            <div>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">GitHub</a>
+            </div>
         </div>
     </footer>
 
     <script>
-        function analyzeBias() {
-            // Re-route to login to enforce user tracking before using Chat UI
-            window.location.href = '/login';
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+                // Close others
+                faqItems.forEach(i => i.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
+            });
+        });
+
+        // Particle Generation
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 20;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.opacity = Math.random();
+            particlesContainer.appendChild(particle);
         }
     </script>
 </body>
-
 </html>
