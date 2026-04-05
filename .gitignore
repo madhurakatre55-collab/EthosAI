@@ -1,3 +1,4 @@
 .env
 __pycache__/
 task_output/log.txt
+*.db

@@ -15,7 +15,6 @@ gemini_flash_llm= LLM(
 
 
 
-
 DEFAULT_SETTINGS = {
     "cache": True,
     "verbose": True,
@@ -23,8 +22,6 @@ DEFAULT_SETTINGS = {
     "use_system_prompt": True,
     "max_execution_time": 300,
 }
-
-
 
 
 # AGENTS
