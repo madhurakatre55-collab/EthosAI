@@ -11,6 +11,9 @@ Bias_detection = Task(
        # DESCRIPTION OF FOR BIASLENS AGENT 
  
   description = """
+  Here is the raw data/context provided by the user for analysis:
+  {user_data}
+
   Your analysis should:
     1. Identify the sector of the provided dataset and model:
       - Medical (diagnosis/treatment prediction)
