@@ -1,11 +1,12 @@
+
 from agents import Bias_lens,Explainer,Fix_advisor,Updater,Log_generator,Log_insights
-from work import (Bias_detection,Explains_issue,Fix,Update,Log_generate,Insights)
+from Tasks import (Bias_detection,Explains_issues,Correction_advise,Updates_data,Log_generation,Insights_data)
 from crewai import Crew, Process 
 
-# Define the Ethos Crew with the requested sequential workflow
+# Define the Ethos Crew with the  sequential workflow
 Ethos_crew = Crew(
   agents=[Bias_lens, Explainer, Fix_advisor, Updater, Log_generator, Log_insights ],
-  tasks=[Bias_detection, Explains_issue, Fix, Update, Log_generate, Insights ],
+  tasks=[Bias_detection, Explains_issues, Correction_advise, Updates_data, Log_generation, Insights_data ],
   process=Process.sequential,
   respect_context_window=True,
   verbose=True,
