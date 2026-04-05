@@ -2,9 +2,7 @@ import os
 from crewai import Task
 from agents import Bias_lens,Explainer, Fix_advisor ,Updater ,Log_generator ,Log_insights
 
-os.makedirs("task_outputs",exist_ok=True)
-
-
+os.makedirs("task_output", exist_ok=True)
                                    #BIAS LENS (AGENT 1)
 
 Bias_detection = Task(
