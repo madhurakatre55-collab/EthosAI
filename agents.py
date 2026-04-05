@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Error checking for GEMINI_API_KEY
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("ERROR: GEMINI_API_KEY environment variable is not set. Please add it to your .env file.")
@@ -15,7 +14,6 @@ my_llm = LLM(
 )
 
 
-# Default settings to avoid repetition across all agents
 DEFAULT_SETTINGS = {
     "cache": True,
     "verbose": True,
