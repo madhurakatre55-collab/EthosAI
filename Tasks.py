@@ -485,7 +485,7 @@ Insights_data = Task (
   7. Bias drift alerts
 
   8. Final summary of system behavior. """,
-  agent = Log_Insights, 
+  agent = Log_insights, 
   context = [ Bias_detection,Explains_issues,Correction_advise, Updates_data,Log_generation ] ,
   output_file =" task_output/generates_logs.md",
 )
