@@ -1,54 +1,63 @@
 import os
 import urllib.request
-
-from agents import Bias_lens,Explainer,Fix_advisor,Updater,Log_generator,Log_insights
-from Tasks import (Bias_detection,Explains_issues,Correction_advise,Updates_data,Log_generation,Insights_data)
+from agents import Senior_Fairness_Auditor, Updater, Technical_Reporter
+from Tasks import (Unified_Fairness_Analysis, Updates_data, Comprehensive_Audit_Report)
 from crewai import Crew, Process 
 
-# Define the Ethos Crew with the  sequential workflow
-Ethos_crew = Crew(
-  agents=[Bias_lens, Explainer, Fix_advisor, Updater, Log_generator, Log_insights ],
-  tasks=[Bias_detection, Explains_issues, Correction_advise, Updates_data, Log_generation, Insights_data ],
+# Define Phase 1 Crew (Analysis & Advisory)
+# Optimized for Lean Architecture: Only 2 agents to minimize API calls
+Phase1_Crew = Crew(
+  agents=[Senior_Fairness_Auditor, Technical_Reporter],
+  tasks=[Unified_Fairness_Analysis, Comprehensive_Audit_Report],
   process=Process.sequential,
   respect_context_window=True,
-  verbose=True,
+  verbose=False,
   cache=True
 )
 
-# --- Corrected Execution Block ---
-if __name__ == "__main__":
-    print("Welcome to EthosAI!")
-    user_input = input("Please enter your data, or paste an external file link (URL / path):\n> ").strip()
+# Define Phase 2 Crew (Execution)
+Phase2_Crew = Crew(
+  agents=[Updater],
+  tasks=[Updates_data],
+  process=Process.sequential,
+  respect_context_window=True,
+  verbose=False,
+  cache=True
+)
 
-    # Check if it is a website or raw URL link
-    if user_input.startswith("http://") or user_input.startswith("https://"):
-        print("Detected external link! Downloading data...")
+def run_phase1(user_data):
+    """Runs the primary auditing crew."""
+    result = Phase1_Crew.kickoff(inputs={"user_data": user_data})
+    return result.raw
+
+def run_phase2(user_data="Apply approved fixes."):
+    """Runs the execution crew."""
+    result = Phase2_Crew.kickoff(inputs={"user_data": user_data})
+    return result.raw
+
+# --- Main Execution (For CLI/Direct usage) ---
+if __name__ == "__main__":
+    from router import determine_intent, get_general_response
+    print("Welcome to EthosAI!")
+    user_input = input("Please enter your data, or paste a link:\n> ").strip()
+
+    # Data ingestion logic...
+    user_data = user_input
+    if user_input.startswith("http"):
         try:
             response = urllib.request.urlopen(user_input)
             user_data = response.read().decode('utf-8')
-        except Exception as e:
-            print(f"Error fetching URL: {e}")
-            user_data = user_input
-    # Check if it is a local file path
-    elif os.path.exists(user_input) and os.path.isfile(user_input):
-        print("Detected local file! Reading contents...")
-        try:
-            with open(user_input, 'r', encoding='utf-8') as f:
-                user_data = f.read()
-        except Exception as e:
-            print(f"Error reading file: {e}")
-            user_data = user_input
-    else:
-        user_data = user_input
+        except: pass
 
-    print("\nLaunching EthosAI Crew...")
-    result = Ethos_crew.kickoff(
-        inputs={
-            "user_data": user_data
-        }
-    )
-
-    # Accessing the output
-    print("\nCrew Execution Complete!")
-    print("Final Output:")
-    print(result.raw)
+    intent = determine_intent(user_input, has_file=False)
+    
+    if intent == "GENERAL":
+        print(get_general_response(user_input))
+    elif intent == "PHASE_1":
+        print("Launching Lean Auditing Crew...")
+        result = run_phase1(user_data)
+        print(result)
+    elif intent == "PHASE_2":
+        print("Launching Model Update Crew...")
+        result = run_phase2(user_data)
+        print(result)

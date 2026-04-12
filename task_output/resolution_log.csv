@@ -1,0 +1,5 @@
+Attribute,Action_Taken,Fairness_Before,Fairness_After,Status
+Gender,Use blind hiring practices to reduce bias,0.6,0.8,Success
+Age,Implement age-neutral loan eligibility criteria,0.7,0.9,Success
+Income,Continue using income as a neutral attribute,0.9,0.9,Success
+Credit Score,Regularly review and update credit score models to reduce bias,0.8,0.92,Success

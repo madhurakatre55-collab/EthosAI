@@ -1,20 +1,30 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from mains import Ethos_crew
 import os
 import urllib.request
 import threading
 import sqlite3
 
+# Use absolute path to avoid path confusion when Flask reloader restarts
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ethos_users.db')
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
+    conn.execute('PRAGMA journal_mode=WAL')  # WAL mode allows concurrent reads/writes
+    conn.execute('PRAGMA busy_timeout=30000')  # Wait up to 30s instead of failing instantly
+    return conn
+
 def init_db():
-    conn = sqlite3.connect('ethos_users.db')
+    conn = get_db()
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, password TEXT)''')
     conn.commit()
     conn.close()
 
-init_db()
+# Only run init_db once — skip the extra call that Flask's debug reloader spawns
+if os.environ.get('WERKZEUG_RUN_MAIN') != 'false':
+    init_db()
 
 app = Flask(__name__, static_folder='frontend')
 CORS(app)
@@ -42,7 +52,7 @@ def signup():
         return jsonify({"error": "All fields are required"}), 400
 
     try:
-        conn = sqlite3.connect('ethos_users.db')
+        conn = get_db()
         c = conn.cursor()
         c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, password))
         conn.commit()
@@ -59,7 +69,7 @@ def login_api():
     email = data.get('email')
     password = data.get('password')
 
-    conn = sqlite3.connect('ethos_users.db')
+    conn = get_db()
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
     user = c.fetchone()
@@ -101,19 +111,38 @@ def chat():
         
         # Check if local path
         elif os.path.exists(user_input) and os.path.isfile(user_input):
-            try:
-                with open(user_input, 'r', encoding='utf-8') as f:
-                    user_data = f.read()
-            except:
-                pass # Keep original
+            # Pass the absolute path to the agent instead of reading the content
+            # This allows CSVSearchTool to index the file directly
+            user_data = os.path.abspath(user_input)
+            print(f"Detected local file path, passing to agent: {user_data}")
 
     try:
-        # Kick off the EthosAI crew
-        result = Ethos_crew.kickoff(inputs={"user_data": user_data})
-        return jsonify({"response": result.raw})
+        from router import determine_intent, get_general_response
+        from mains import run_phase1, run_phase2
+        
+        intent = determine_intent(user_input, has_file=bool(file))
+        
+        if intent == "GENERAL":
+            response_text = get_general_response(user_input)
+            return jsonify({"response": response_text})
+            
+        elif intent == "PHASE_1":
+            result = run_phase1(user_data)
+            append_text = "\n\n> **Note:** Please review the CSV data above. If you approve, simply type **'Update the model'** to apply these fixes."
+            return jsonify({"response": str(result) + append_text})
+            
+        elif intent == "PHASE_2":
+            result = run_phase2(user_data)
+            append_text = "\n\n> **Note:** The **Model Resolution Log** has been generated. You can view the technical 'Before vs After' comparison sheet above."
+            return jsonify({"response": str(result) + append_text})
+            
+        else:
+            return jsonify({"error": "Failed to determine intent."}), 400
+            
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     print("starting EthosAI Chatbot Server on http://localhost:5000")
-    app.run(debug=True, port=5000)
+    # use_reloader=False prevents the double-process issue that causes DB lock on startup
+    app.run(debug=True, port=5000, use_reloader=False)

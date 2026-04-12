@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom Style -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body class="chat-page">
+
+    <!-- Report Dashboard Modal -->
+    <div id="reportOverlay" class="report-overlay">
+        <div class="report-sheet">
+            <div class="sheet-header">
+                <div>
+                    <h3>EthosAI | Fairness Audit Report</h3>
+                    <p id="reportTimestamp">Generated on April 11, 2026</p>
+                </div>
+                <div class="header-actions">
+                    <div class="dropdown">
+                        <button class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-download"></i> Export Data <i class="fa-solid fa-chevron-down"
+                                style="font-size: 0.7rem; margin-left: 5px;"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="exportReport('json')"><i class="fa-solid fa-file-code"></i> Structured
+                                JSON</a>
+                            <a href="#" onclick="exportReport('csv')"><i class="fa-solid fa-file-csv"></i> Industrial
+                                CSV</a>
+                            <a href="#" onclick="exportReport('txt')"><i class="fa-solid fa-file-lines"></i> Plain Text
+                                (.txt)</a>
+                        </div>
+                    </div>
+                    <button class="close-report" onclick="closeDashboard()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sheet-body">
+                <div class="report-document" id="reportDocument">
+                    <!-- The 5-6 Page Markdown content will be injected here -->
+                    <div style="text-align:center; padding-top:100px; color:#94a3b8;">
+                        <i class="fa-solid fa-file-contract fa-3x" style="margin-bottom:20px;"></i>
+                        <p>Loading Technical Audit Report...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sheet-footer">
+                <p>Confidential • EthosAI Automated Audit v2.0</p>
+                <div class="footer-actions">
+                    <button class="btn btn-outline" onclick="window.print()">
+                        <i class="fa-solid fa-download"></i> Download PDF
+                    </button>
+                    <button class="btn btn-primary" onclick="closeDashboard()">Back to Terminal</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Floating Particles -->
     <div class="chat-particles" id="particles"></div>
@@ -37,7 +92,9 @@
                     <i class="fa-solid fa-robot"></i>
                 </div>
                 <div class="bubble">
-                    <p>Welcome to the **EthosAI Fairness Terminal**. I am your automated auditing assistant. Paste your dataset context, external file link, or local path, and I will analyze it for bias through my multi-agent lens.</p>
+                    <p>Welcome to the **EthosAI Fairness Terminal**. I am your automated auditing assistant. Paste your
+                        dataset context, external file link, or local path, and I will analyze it for bias through my
+                        multi-agent lens.</p>
                 </div>
             </div>
         </div>
@@ -76,4 +133,5 @@
         }
     </script>
 </body>
+
 </html>
