@@ -12,11 +12,14 @@ def get_db():
     database_url = os.environ.get("DATABASE_URL")
     if database_url:
         import psycopg2
+        # Ensure SSL is enabled for Supabase pooler connections
+        if "sslmode" not in database_url:
+            database_url += "?sslmode=require"
         return psycopg2.connect(database_url)
     else:
         conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
-        conn.execute('PRAGMA journal_mode=WAL')  # WAL mode allows concurrent reads/writes
-        conn.execute('PRAGMA busy_timeout=30000')  # Wait up to 30s instead of failing instantly
+        conn.execute('PRAGMA journal_mode=WAL')
+        conn.execute('PRAGMA busy_timeout=30000')
         return conn
 
 def init_db():
@@ -31,9 +34,11 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Only run init_db once — skip the extra call that Flask's debug reloader spawns
-if os.environ.get('WERKZEUG_RUN_MAIN') != 'false':
+# Init DB on startup — wrapped in try/except so a bad DB URL never crashes the server
+try:
     init_db()
+except Exception as e:
+    print(f"[WARNING] Database init failed: {e}. App will still start.")
 
 app = Flask(__name__, static_folder='frontend')
 CORS(app)
