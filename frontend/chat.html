@@ -76,12 +76,17 @@
         <header class="chat-header">
             <div class="logo-area" onclick="window.location.href='/'" style="cursor:pointer">
                 <div class="logo-icon-sm">
-                    <i class="fa-solid fa-scale-balanced" style="color:white"></i>
+                    <i class="fa-solid fa-fingerprint" style="color:white"></i>
                 </div>
                 <h2>EthosAI Fairness Terminal</h2>
             </div>
-            <div class="status-indicator">
-                <span class="dot"></span> <span>Online</span>
+            <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+                <div class="status-indicator">
+                    <span class="dot"></span> <span>Online</span>
+                </div>
+                <div class="user-profile-icon" style="cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 50%; color: #f8fafc; display: flex; align-items: center; justify-content: center; width: 35px; height: 35px;" title="User Profile">
+                    <i class="fa-solid fa-user"></i>
+                </div>
             </div>
         </header>
 
@@ -89,7 +94,7 @@
         <div class="chat-box" id="chatBox">
             <div class="message bot-message">
                 <div class="avatar logo-avatar">
-                    <i class="fa-solid fa-robot"></i>
+                    <i class="fa-solid fa-brain"></i>
                 </div>
                 <div class="bubble">
                     <p>Welcome to the **EthosAI Fairness Terminal**. I am your automated auditing assistant. Paste your

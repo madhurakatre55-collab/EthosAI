@@ -9,16 +9,25 @@ import sqlite3
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ethos_users.db')
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
-    conn.execute('PRAGMA journal_mode=WAL')  # WAL mode allows concurrent reads/writes
-    conn.execute('PRAGMA busy_timeout=30000')  # Wait up to 30s instead of failing instantly
-    return conn
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        import psycopg2
+        return psycopg2.connect(database_url)
+    else:
+        conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
+        conn.execute('PRAGMA journal_mode=WAL')  # WAL mode allows concurrent reads/writes
+        conn.execute('PRAGMA busy_timeout=30000')  # Wait up to 30s instead of failing instantly
+        return conn
 
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, password TEXT)''')
+    if os.environ.get("DATABASE_URL"):
+        c.execute('''CREATE TABLE IF NOT EXISTS users
+                     (id SERIAL PRIMARY KEY, name TEXT, email TEXT UNIQUE, password TEXT)''')
+    else:
+        c.execute('''CREATE TABLE IF NOT EXISTS users
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, password TEXT)''')
     conn.commit()
     conn.close()
 
@@ -44,9 +53,9 @@ def serve_login():
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.json
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
+    name = data.get('name', '').strip()
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '').strip()
 
     if not name or not email or not password:
         return jsonify({"error": "All fields are required"}), 400
@@ -54,24 +63,26 @@ def signup():
     try:
         conn = get_db()
         c = conn.cursor()
-        c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, password))
+        param = "%s" if os.environ.get("DATABASE_URL") else "?"
+        c.execute(f"INSERT INTO users (name, email, password) VALUES ({param}, {param}, {param})", (name, email, password))
         conn.commit()
         conn.close()
         return jsonify({"success": "Profile created successfully!"})
-    except sqlite3.IntegrityError:
-        return jsonify({"error": "User with this email already exists"}), 400
     except Exception as e:
+        if "UNIQUE" in str(e) or "unique" in str(e).lower():
+            return jsonify({"error": "User with this email already exists"}), 400
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/login', methods=['POST'])
 def login_api():
     data = request.json
-    email = data.get('email')
-    password = data.get('password')
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '').strip()
 
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
+    param = "%s" if os.environ.get("DATABASE_URL") else "?"
+    c.execute(f"SELECT * FROM users WHERE email={param} AND password={param}", (email, password))
     user = c.fetchone()
     conn.close()
 
@@ -83,6 +94,20 @@ def login_api():
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
+
+@app.route('/view-db')
+def view_db():
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT id, name, email FROM users")
+    users = c.fetchall()
+    conn.close()
+    
+    html = "<h2>Registered Users Database</h2><table border='1' cellpadding='10'><tr><th>ID</th><th>Name</th><th>Email</th></tr>"
+    for u in users:
+        html += f"<tr><td>{u[0]}</td><td>{u[1]}</td><td>{u[2]}</td></tr>"
+    html += "</table><br><a href='/'>Back to Home</a>"
+    return html
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -143,6 +168,7 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    print("starting EthosAI Chatbot Server on http://localhost:5000")
+    port = int(os.environ.get('PORT', 5000))
+    print(f"Starting EthosAI Chatbot Server on port {port}")
     # use_reloader=False prevents the double-process issue that causes DB lock on startup
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)

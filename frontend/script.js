@@ -93,10 +93,7 @@ function appendMessage(sender, text) {
     if (sender === 'bot') {
         avatarHTML = `
             <div class="avatar logo-avatar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <path d="M9 12l2 2 4-4"/>
-                </svg>
+                <i class="fa-solid fa-brain"></i>
             </div>`;
     } else {
         avatarHTML = `<div class="avatar user-avatar">U</div>`;
@@ -106,7 +103,7 @@ function appendMessage(sender, text) {
     let contentHTML = '';
     if (sender === 'bot' && isCSV(text)) {
         // Separate CSV data from prose if present
-        const csvMatch = text.match(/Sector,Attribute Analyzed,Bias Detected[\s\S]*?(?=\n\nNote:|\nNote:|$)/);
+        const csvMatch = text.match(/Sector,(?:Attribute|Attribute Analyzed),(?:Biased|Bias Detected)[\s\S]*?(?=\n\nNote:|\nNote:|$)/);
         const csvData = csvMatch ? csvMatch[0] : text;
         const prose = text.replace(csvData, '').trim();
 
@@ -146,7 +143,7 @@ function appendMessage(sender, text) {
 let biasChartInstance = null;
 
 function isCSV(text) {
-    return text.includes('Sector') && text.includes('Attribute Analyzed') && text.includes('Bias Detected');
+    return text.includes('Sector') && text.includes('Attribute') && (text.includes('Bias Detected') || text.includes('Biased'));
 }
 
 function openDashboard(reportId) {
@@ -221,7 +218,7 @@ function renderDashboardTable(csvText) {
         html += '<tr>';
         row.forEach((cell, idx) => {
             let val = cell.replace(/^"|"$/g, '').trim();
-            if (headers[idx].includes('Bias Detected')) {
+            if (headers[idx].includes('Bias Detected') || headers[idx].includes('Biased')) {
                 const isYes = val.toLowerCase() === 'yes';
                 val = `<span style="color: ${isYes ? '#ef4444' : '#22c55e'}; font-weight: 700;">${val}</span>`;
             }
@@ -279,10 +276,7 @@ function appendThinking() {
 
     msgDiv.innerHTML = `
         <div class="avatar logo-avatar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                <path d="M9 12l2 2 4-4"/>
-            </svg>
+            <i class="fa-solid fa-brain"></i>
         </div>
         <div class="bubble">
             <div class="typing-indicator">

@@ -22,8 +22,8 @@ Unified_Fairness_Analysis = Task(
     Sector, Attribute, Biased, Fairness_Score, Precision_Metric, Fix_Recommendation
     """,
     expected_output="""
-    A technical CSV block representing the comprehensive audit results for parity tracking.
-    """,
+    A technical CSV file representing the comprehensive audit results for parity tracking.
+    and also give the link of the file in the output and also wirte an short report in text block formte make sure it includes pictorical repsentation of the data like picchartts and graphs""",
     agent=Senior_Fairness_Auditor,
     output_file="task_output/consolidated_analysis.csv"
 )
@@ -66,7 +66,7 @@ Comprehensive_Audit_Report = Task(
     """,
     expected_output="""
     A comprehensive, 6-page Markdown document including professional headings, detailed technical prose, 
-    and the final CSV data block at the end.
+    and the final CSV data file in link format at the end make sure the link opens in browser and also give the link of the file in the output and also wirte an short report in text block formte make sure it includes pictorical repsentation of the data like picchartts and graphs.
     """,
     agent=Technical_Reporter,
     context=[Unified_Fairness_Analysis],
