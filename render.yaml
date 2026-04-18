@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ethosai-platform
+    env: docker
+    plan: free
+    region: ohio
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
