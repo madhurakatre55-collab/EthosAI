@@ -1860,3 +1860,73 @@ body.login-page {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+/* ============================================
+   PRINT STYLES (PDF EXPORT)
+   ============================================ */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    body {
+        background: white;
+    }
+
+    #reportOverlay, 
+    #reportOverlay * {
+        visibility: visible;
+    }
+
+    #reportOverlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: auto;
+        background: white;
+        backdrop-filter: none;
+        overflow: visible;
+        padding: 0;
+    }
+
+    .report-sheet {
+        position: static;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        margin: 0;
+        transform: none !important;
+    }
+
+    .sheet-body {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+    }
+
+    .report-document {
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .header-actions,
+    .sheet-footer {
+        display: none !important;
+    }
+
+    .report-document h1,
+    .report-document h2,
+    .report-document h3 {
+        page-break-after: avoid;
+    }
+
+    .report-document table, 
+    .report-document p {
+        page-break-inside: avoid;
+    }
+}
