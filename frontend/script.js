@@ -178,7 +178,12 @@ function appendMessage(sender, text) {
 let biasChartInstance = null;
 
 function isCSV(text) {
-    return text.includes('Sector') && text.includes('Attribute') && (text.includes('Bias Detected') || text.includes('Biased'));
+    // Primary: the agent used the document separator we require
+    if (text.includes('--- DOCUMENT END ---')) return true;
+    // Fallback: raw CSV with known bias-audit headers
+    return text.includes('Sector') && text.includes('Attribute') &&
+           (text.includes('Bias Detected') || text.includes('Biased') ||
+            text.includes('Bias_Detected') || text.includes('Fairness_Score'));
 }
 
 function openDashboard(reportId) {
