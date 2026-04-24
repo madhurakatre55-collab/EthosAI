@@ -5,6 +5,17 @@ import urllib.request
 import threading
 import sqlite3
 
+# Import AI modules at startup so crashes surface in logs, not as silent 502s
+try:
+    from router import determine_intent, get_general_response
+    from mains import run_phase1, run_phase2
+    AI_READY = True
+    print("[OK] AI modules loaded successfully.")
+except BaseException as e:
+    AI_READY = False
+    AI_ERROR = str(e)
+    print(f"[ERROR] AI modules failed to load: {e}")
+
 # Use absolute path to avoid path confusion when Flask reloader restarts
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ethos_users.db')
 
@@ -114,6 +125,19 @@ def view_db():
     html += "</table><br><a href='/'>Back to Home</a>"
     return html
 
+@app.route('/healthz')
+def healthz():
+    import sys
+    status = {
+        "status": "ok" if AI_READY else "degraded",
+        "ai_modules_loaded": AI_READY,
+        "ai_error": AI_ERROR if not AI_READY else None,
+        "python_version": sys.version,
+        "env_groq_key_set": bool(os.environ.get("GROQ_API_KEY")),
+        "env_database_url_set": bool(os.environ.get("DATABASE_URL")),
+    }
+    return jsonify(status), 200 if AI_READY else 503
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     user_input = request.form.get('message', '').strip()
@@ -146,10 +170,10 @@ def chat():
             user_data = os.path.abspath(user_input)
             print(f"Detected local file path, passing to agent: {user_data}")
 
+    if not AI_READY:
+        return jsonify({"error": f"AI modules failed to load at startup: {AI_ERROR}"}), 503
+
     try:
-        from router import determine_intent, get_general_response
-        from mains import run_phase1, run_phase2
-        
         intent = determine_intent(user_input, has_file=bool(file))
         
         if intent == "GENERAL":
@@ -169,8 +193,9 @@ def chat():
         else:
             return jsonify({"error": "Failed to determine intent."}), 400
             
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except BaseException as e:
+        print(f"[ERROR] Chat request failed: {type(e).__name__}: {e}")
+        return jsonify({"error": f"{type(e).__name__}: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
