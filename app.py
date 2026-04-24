@@ -152,13 +152,14 @@ def chat():
         try:
             file_content = file.read().decode('utf-8')
 
-            # Truncate large CSVs to first 75 rows to stay within Groq token limits.
-            # Bias patterns are detectable from a representative sample.
+            # Truncate large CSVs to stay within Groq token limits.
+            # MAX_ROWS=20 because wide files (e.g. 35 columns) still use lots of tokens.
+            # Plus a 2500-char hard cap as extra safety for very wide rows.
             lines = file_content.strip().split('\n')
             header = lines[0] if lines else ''
             data_rows = lines[1:]
             total_rows = len(data_rows)
-            MAX_ROWS = 75
+            MAX_ROWS = 20
 
             if total_rows > MAX_ROWS:
                 sample_rows = data_rows[:MAX_ROWS]
@@ -168,6 +169,11 @@ def chat():
                 truncation_note = f"\n[Dataset: {total_rows} rows total.]"
 
             truncated_content = '\n'.join([header] + sample_rows) + truncation_note
+
+            # Hard cap: if the CSV block is still too wide, trim to 2500 chars
+            if len(truncated_content) > 2500:
+                truncated_content = truncated_content[:2500] + "\n[...truncated to fit token limit]"
+
             user_data = f"Attached File Data:\n{truncated_content}\n\nUser Instructions:\n{user_input}"
 
         except Exception as e:

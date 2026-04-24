@@ -5,10 +5,10 @@ import os
 
 load_dotenv()
 
-# Using llama-3.1-8b-instant for high TPM limit (131K/min) on Groq free tier.
-# llama-3.3-70b-versatile only allows 12K TPM which is too small for agent workflows.
+# Using llama-3.3-70b-versatile: has 12K TPM vs llama-3.1-8b-instant's 6K TPM on this Groq account.
+# 70b is the better choice despite being larger — the rate limit is what matters, not model size.
 primary_llm = LLM(
-    model="groq/llama-3.1-8b-instant",
+    model="groq/llama-3.3-70b-versatile",
     api_key=os.getenv("GROQ_API_KEY")
 )
 
