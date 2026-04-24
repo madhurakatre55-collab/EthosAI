@@ -1810,6 +1810,47 @@ body.login-page {
 }
 
 
+/* Table Styling inside Markdown Reports */
+.report-document table {
+    width: 100%;
+    max-width: 100%;
+    margin: 24px 0;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.02);
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap; /* Prevents awkward column bunching on wide tables */
+}
+
+.report-document th,
+.report-document td {
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-document th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.report-document tr:last-child td {
+    border-bottom: none;
+}
+
+.report-document tr:nth-of-type(even) {
+    background-color: #f8fafc;
+}
+
+.report-document tr:hover {
+    background-color: rgba(124, 58, 237, 0.03);
+}
+
 /* Dropdown for Export */
 .header-actions {
     display: flex;
