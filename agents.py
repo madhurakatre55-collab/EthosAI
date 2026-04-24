@@ -1,5 +1,4 @@
 from crewai import Agent, LLM
-from Tools import file_reader, report_writer
 from dotenv import load_dotenv
 import os
 
@@ -30,7 +29,7 @@ Senior_Fairness_Auditor = Agent(
   the skills of a data scientist (detecting bias), a communicator (explaining it clearly), and 
   a legal strategist (suggesting fixes). You strictly analyze only the provided data and never 
   hallucinate information or sectors not present in the source.""" ,
-  tools=[file_reader, report_writer],
+  tools=[],
   max_rpm=15,
   max_iter=3,
   **DEFAULT_SETTINGS
@@ -42,7 +41,7 @@ Updater = Agent(
   goal='To apply approved fixes and update the model for better fairness',
   llm=primary_llm,
   backstory="""You are a machine learning engineer responsible for transforming recommendations into real improvements, has a 18 years of experience. You takes approved fixes and carefully applies them to production systems.""",
-  tools=[file_reader,report_writer],
+  tools=[],
   max_rpm=10,
   max_iter=3,
   **DEFAULT_SETTINGS
@@ -57,7 +56,7 @@ Technical_Reporter = Agent(
     documenting algorithmic bias with extreme precision and faithfulness to the source data. You 
     convert findings into a cohesive report that is strictly evidence-based, avoiding generic 
     boilerplate and forced length padding.""" ,
-    tools=[report_writer],
+    tools=[],
     max_rpm=20,
     max_iter=5,
     **DEFAULT_SETTINGS
