@@ -137,13 +137,20 @@ function appendMessage(sender, text) {
     // Interaction Report Logic
     let contentHTML = '';
     if (sender === 'bot' && isCSV(text)) {
-        // Separate CSV data from prose if present
-        const csvMatch = text.match(/Sector,(?:Attribute|Attribute Analyzed),(?:Biased|Bias Detected)[\s\S]*?(?=\n\nNote:|\nNote:|$)/);
-        const csvData = csvMatch ? csvMatch[0] : text;
-        const prose = text.replace(csvData, '').trim();
+        let prose = '';
+
+        if (text.includes('--- DOCUMENT END ---')) {
+            // Split-document format: prose before separator
+            const parts = text.split('--- DOCUMENT END ---');
+            prose = parts[0].trim();
+        } else {
+            // Legacy: try to extract raw CSV and leave the rest as prose
+            const csvMatch = text.match(/Sector,(?:Attribute|Attribute Analyzed),(?:Biased|Bias Detected)[\s\S]*?(?=\n\nNote:|\nNote:|$)/);
+            if (csvMatch) prose = text.replace(csvMatch[0], '').trim();
+        }
 
         const reportId = 'report_' + Date.now();
-        window.__ethosReports[reportId] = csvData;
+        window.__ethosReports[reportId] = text; // Always store full response
 
         contentHTML = `
             ${prose ? `<div class="prose-box" style="margin-bottom: 12px;">${marked.parse(prose)}</div>` : ''}
@@ -205,17 +212,22 @@ function openDashboard(reportId) {
     document.getElementById('reportTimestamp').textContent = `Generated on ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
 
     // Split Prose from CSV Data Block
-    let proseContent = rawContent;
+    let proseContent = '';
     let csvData = "";
 
     if (rawContent.includes('--- DOCUMENT END ---')) {
         const parts = rawContent.split('--- DOCUMENT END ---');
         proseContent = parts[0].trim();
-        csvData = parts[1].trim();
+        csvData = parts[1] ? parts[1].trim() : "";
     } else if (isCSV(rawContent)) {
         // Fallback for older raw CSV reports
         csvData = rawContent;
-        proseContent = "# Technical Audit Summary\n\n*Note: This is a legacy raw data report.*";
+        proseContent = "";
+    }
+
+    // Fallback: never show a blank document
+    if (!proseContent) {
+        proseContent = "# Fairness Audit Report\n\n*The AI agents completed their analysis. The structured audit data is shown below.*";
     }
 
     // Render the long-form document
