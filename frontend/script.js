@@ -61,14 +61,42 @@ async function sendMessage() {
     formData.append('message', text);
     if (file) { formData.append('file', file); }
 
+    // Show elapsed time counter so user knows the agents are still working
+    let elapsed = 0;
+    const thinkingTextEl = document.getElementById(thinkingId)?.querySelector('#thinking-text');
+    const timer = setInterval(() => {
+        elapsed++;
+        if (thinkingTextEl) {
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+            thinkingTextEl.textContent = `Agents are working... (${timeStr} elapsed — AI tasks can take 2-5 mins)`;
+        }
+    }, 1000);
+
+    // 5-minute timeout for AI agent tasks
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 300000);
+
     try {
         const res = await fetch('/api/chat', {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
 
-        const data = await res.json();
+        clearTimeout(timeoutId);
+        clearInterval(timer);
         document.getElementById(thinkingId).remove();
+
+        // Check if response is OK before parsing JSON
+        if (!res.ok) {
+            const errorText = await res.text();
+            appendMessage('bot', `**Server Error (${res.status}):** ${errorText.substring(0, 300)}`);
+            return;
+        }
+
+        const data = await res.json();
 
         if (data.error) {
             appendMessage('bot', `**Error:** ${data.error}`);
@@ -77,8 +105,15 @@ async function sendMessage() {
         }
 
     } catch (err) {
+        clearTimeout(timeoutId);
+        clearInterval(timer);
         document.getElementById(thinkingId).remove();
-        appendMessage('bot', `**Connection Error:** Cannot reach EthosAI backend.`);
+
+        if (err.name === 'AbortError') {
+            appendMessage('bot', `**Timeout:** The AI agents took longer than 5 minutes. Please try again with a smaller dataset.`);
+        } else {
+            appendMessage('bot', `**Connection Error:** The server may be waking up (Render free tier takes ~50s). Please wait a moment and try again.`);
+        }
     }
 }
 
