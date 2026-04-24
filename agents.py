@@ -1,5 +1,5 @@
 from crewai import Agent, LLM
-from Tools import file_reader, csv_searcher, report_writer
+from Tools import file_reader, report_writer
 from dotenv import load_dotenv
 import os
 
@@ -30,7 +30,7 @@ Senior_Fairness_Auditor = Agent(
   the skills of a data scientist (detecting bias), a communicator (explaining it clearly), and 
   a legal strategist (suggesting fixes). You strictly analyze only the provided data and never 
   hallucinate information or sectors not present in the source.""" ,
-  tools=[file_reader, csv_searcher,report_writer],
+  tools=[file_reader, report_writer],
   max_rpm=15,
   max_iter=3,
   **DEFAULT_SETTINGS
