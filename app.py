@@ -151,7 +151,25 @@ def chat():
     if file:
         try:
             file_content = file.read().decode('utf-8')
-            user_data = f"Attached File Data:\n{file_content}\n\nUser Instructions:\n{user_input}"
+
+            # Truncate large CSVs to first 75 rows to stay within Groq token limits.
+            # Bias patterns are detectable from a representative sample.
+            lines = file_content.strip().split('\n')
+            header = lines[0] if lines else ''
+            data_rows = lines[1:]
+            total_rows = len(data_rows)
+            MAX_ROWS = 75
+
+            if total_rows > MAX_ROWS:
+                sample_rows = data_rows[:MAX_ROWS]
+                truncation_note = f"\n[Note: Dataset has {total_rows} rows. Showing first {MAX_ROWS} rows for analysis.]"
+            else:
+                sample_rows = data_rows
+                truncation_note = f"\n[Dataset: {total_rows} rows total.]"
+
+            truncated_content = '\n'.join([header] + sample_rows) + truncation_note
+            user_data = f"Attached File Data:\n{truncated_content}\n\nUser Instructions:\n{user_input}"
+
         except Exception as e:
             return jsonify({"error": f"Failed to read attached file: {str(e)}"}), 400
     else:
